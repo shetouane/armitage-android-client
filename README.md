@@ -49,7 +49,7 @@ here is a list of what's not working
 > Widgets: Session Details & FileBrowser Plugin
 > Attack Wizard
 > If SSL option in settings is not checked the app will crash
-> ~~Sending commands in console is not working 
+> ~~Sending commands in console is not working (fixed)
 
 ```
 
