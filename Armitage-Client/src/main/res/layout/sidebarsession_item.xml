@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<TextView
+	    android:id="@+id/sessionType"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentTop="true"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginTop="5dp"
+	    android:text="Title"
+	    android:textColor="#555555"
+	    android:textSize="16sp" />
+
+	<TextView
+	    android:id="@+id/sessionPeer"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignLeft="@+id/sessionType"
+	    android:layout_below="@+id/sessionType"
+	    android:paddingBottom="5dp"
+	    android:text="Disc"
+	    android:textAppearance="?android:attr/textAppearanceMedium"
+	    android:textColor="#999999"
+	    android:textSize="15dp" />
+
+</RelativeLayout>

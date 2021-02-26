@@ -1,0 +1,37 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" > 
+    
+   	<item android:id="@+id/mnuHostSessions" android:visible="false" android:title="Get Sessions">
+   </item>
+   	
+    <item android:id="@+id/mnuHostLogin" android:visible="false" android:title="Login">
+        <menu>
+            <item android:id="@+id/mnuHostLogin21" android:visible="false" android:title="Ftp"/>
+            <item android:id="@+id/mnuHostLogin22" android:visible="false" android:title="Ssh"/>
+            <item android:id="@+id/mnuHostLogin23" android:visible="false" android:title="Telnet"/>
+            <item android:id="@+id/mnuHostLogin80" android:visible="false" android:title="Http"/>
+            <item android:id="@+id/mnuHostLogin445" android:visible="false" android:title="Psexec"/>
+ 		</menu>
+    </item>  
+    
+    <item android:id="@+id/mnuHostFindAttacks" android:visible="false" android:title="Find Attacks">
+		<menu>
+            <item android:id="@+id/mnuFindAttacksOS" android:title="Based on OS"/>
+            <item android:id="@+id/mnuFindAttacksServices" android:title="Based on Services"/>
+            <item android:id="@+id/mnuFindAttacksPorts" android:title="Based on Open Ports"/>
+		</menu>
+    </item>
+    
+     <item android:id="@+id/mnuHostScanServices" android:visible="false" android:title="Scan Services"/>
+     <item android:id="@+id/mnuHostScanPorts" android:visible="false" android:title="Scan Ports"/>
+    
+    <item android:id="@+id/mnuHostOS" android:visible="false" android:title="Change OS"/>
+    <item android:id="@+id/mnuHostDetails" android:visible="false" android:title="Host Details"/>
+    <item android:id="@+id/mnuHostRemove" android:visible="false" android:title="Remove Host"/>
+    
+    <item android:id="@+id/mnuSessionKill" android:visible="false" android:title="Terminate Session"/>
+    
+    <item android:id="@+id/mnuConsoleKill" android:visible="false" android:title="Terminate Console"/>
+    
+    <item android:id="@+id/mnuJobDetails" android:visible="false" android:title="Show Details"/>
+    <item android:id="@+id/mnuJobKill" android:visible="false" android:title="Kill Job"/>
+</menu>

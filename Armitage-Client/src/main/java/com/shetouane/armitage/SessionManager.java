@@ -1,0 +1,393 @@
+package com.shetouane.armitage;
+
+import static org.msgpack.template.Templates.TString;
+import static org.msgpack.template.Templates.tMap;
+import static org.msgpack.template.Templates.TValue;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.msgpack.type.Value;
+import org.msgpack.unpacker.Converter;
+
+import com.shetouane.armitage.console.ConsoleActivity;
+import com.shetouane.armitage.console.ConsoleSession;
+import com.shetouane.armitage.console.ControlSession;
+import com.shetouane.armitage.console.ConsoleSession.ConsoleSessionParams;
+import com.shetouane.armitage.fragments.ConsolesFragment;
+import com.shetouane.armitage.fragments.ControlSessionsFragment;
+import com.shetouane.armitage.fragments.HostsFragment;
+import com.shetouane.armitage.fragments.JobsFragment;
+import com.shetouane.armitage.structures.HostItem;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
+import android.util.Log;
+
+public class SessionManager {
+
+	private Context context;
+
+	private int incConsoleIDs = 1000;
+	private Map<String, ConsoleSession> consoleSessions = new ConcurrentHashMap<String, ConsoleSession>();
+	private Map<String, ControlSession> controlSessions = new ConcurrentHashMap<String, ControlSession>();
+	private Map<String, Value> sessionsRemoteInfo;
+
+	public List<ControlSession> controlSessionsList = new CopyOnWriteArrayList<ControlSession>();
+	public List<String> jobsList = new CopyOnWriteArrayList<String>();
+
+	private String currentConsoleWindowId = null,
+			currentControlWindowId = null;
+
+	SessionManager(Context context) {
+		this.context = context;
+	}
+
+	public void getNewSession(ControlSession newSession, String type,
+			String id, ConsoleSessionParams params) {
+		try {
+			Map<String, Value> tmp = null;
+
+			if (sessionsRemoteInfo.containsKey(id)) {
+				Converter conv = new Converter(sessionsRemoteInfo.get(id)
+						.asMapValue());
+				tmp = conv.read(tMap(TString, TValue));
+				conv.close();
+			}
+
+			newSession = new ControlSession(context, type, id, tmp, params);
+			controlSessions.put(id, newSession);
+			controlSessionsList.add(newSession);
+
+			ControlSessionsFragment.updateSessionsRecords();
+
+		} catch (Exception e) {
+		}
+	}
+
+	public ControlSession getSession(String id) {
+		if (id == null)
+			return null;
+		if (controlSessions.containsKey(id)) {
+			return controlSessions.get(id);
+		}
+		return null;
+	}
+
+	public void notifyControlWrite(String id) {
+		if (controlSessions.containsKey(id)) {
+			controlSessions.get(id).pingReadListener();
+		}
+	}
+
+	public void notifyControlNewRead(String id, String data) {
+		if (controlSessions.containsKey(id)) {
+			controlSessions.get(id).newRead(data);
+		}
+	}
+
+	public void updateSessionsRemoteInfo() {
+		List<Object> params = new ArrayList<Object>();
+		params.add("session.list");
+		sessionsRemoteInfo = MainService.client.call(params);
+		if (sessionsRemoteInfo == null)
+			sessionsRemoteInfo = new HashMap<String, Value>();
+	}
+
+	public void updateJobsList() {
+		List<Object> params = new ArrayList<Object>();
+		params.add("job.list");
+		Map<String, Value> res = MainService.client.call(params);
+		if (res != null) {
+			String[] id = res.keySet().toArray(new String[res.size()]);
+
+			jobsList.clear();
+			for (int i = 0; i < res.size(); i++)
+				jobsList.add("[" + id[i] + "] "
+						+ res.get(id[i]).asRawValue().getString());
+
+			try {
+				new Handler().post(new Runnable() {
+					@Override
+					public void run() {
+						if (JobsFragment.listAdapter != null)
+							JobsFragment.listAdapter.notifyDataSetChanged();
+					}
+				});
+			} catch (Exception e) {
+			}
+		}
+	}
+
+	public void stopJob(String id) {
+		List<Object> params = new ArrayList<Object>();
+		params.add("job.stop");
+		params.add(id);
+		Map<String, Value> res = MainService.client.call(params);
+
+		if (res != null && res.containsKey("result")
+				&& res.get("result").asRawValue().getString().equals("success"))
+			updateJobsList();
+	}
+
+	public Map<String, Value> getSessionsRemoteInfo() {
+		return sessionsRemoteInfo;
+	}
+
+	public void getNewConsole(ConsoleSession newConsole) {
+		String id = Integer.toString(incConsoleIDs++);
+		newConsole.setId(id);
+		consoleSessions.put(id, newConsole);
+		Intent tmpIntent = new Intent();
+		tmpIntent.setAction(StaticClass.ARMITAGE_CONSOLE_CREATE);
+		tmpIntent.putExtra("id", id);
+		context.sendBroadcast(tmpIntent);
+	}
+
+	private void updateAdapters() {
+		Intent tmpIntent = new Intent();
+		tmpIntent.setAction(StaticClass.ARMITAGE_NOTIFY_ADAPTER_UPDATE);
+		context.sendBroadcast(tmpIntent);
+	}
+
+	public void notifyNewConsole(String id, String msfId, String prompt) {
+		if (consoleSessions.containsKey(id)) {
+			consoleSessions.get(id).setPrompt(prompt);
+			consoleSessions.get(id).setMsfId(msfId);
+		}
+		updateAdapters();
+	}
+
+	public void notifyConsoleWrite(String id) {
+		if (consoleSessions.containsKey(id)) {
+			consoleSessions.get(id).pingReadListener();
+		}
+	}
+
+	public void notifyConsoleNewRead(String id, String data, String prompt,
+			boolean busy) {
+		if (consoleSessions.containsKey(id)) {
+			consoleSessions.get(id).newRead(data, prompt, busy);
+		}
+	}
+
+	public void notifyDestroyedConsole(String Id, String msfId) {
+		if (consoleSessions.containsKey(Id))
+			consoleSessions.remove(Id);
+		updateAdapters();
+	}
+
+	public void switchWindow(String type, String id, Activity activity) {
+
+		if (currentConsoleWindowId != null
+				&& consoleSessions.containsKey(currentConsoleWindowId))
+			consoleSessions.get(currentConsoleWindowId).setWindowActive(false,
+					null);
+
+		if (currentControlWindowId != null
+				&& consoleSessions.containsKey(currentControlWindowId))
+			controlSessions.get(currentControlWindowId).setWindowActive(false,
+					null);
+
+		if (type.equals("console")) {
+			currentControlWindowId = null;
+
+			if (consoleSessions.containsKey(id)) {
+				ConsoleSession c = consoleSessions.get(id);
+				c.setWindowActive(true, activity);
+				currentConsoleWindowId = id;
+			} else
+				currentConsoleWindowId = null;
+
+		} else if (type.equals("session")) {
+			currentConsoleWindowId = null;
+
+			if (controlSessions.containsKey(id)) {
+				ControlSession c = controlSessions.get(id);
+				c.setWindowActive(true, activity);
+				currentControlWindowId = id;
+			} else
+				currentControlWindowId = null;
+		}
+	}
+
+	public void notifyJobCreated(String id) {
+		Log.d("notifyJobCreated", id);
+	}
+
+	public void closeConsoleWindow(String id) {
+		if (consoleSessions.containsKey(id)) {
+			consoleSessions.get(id).setWindowActive(false, null);
+			currentConsoleWindowId = null;
+		}
+		
+		ConsolesFragment.UpdateConsoleRecords();
+	}
+
+	public void destroyConsole(ConsoleSession c) {
+		c.destroy();
+		if (currentConsoleWindowId == c.getId())
+			currentConsoleWindowId = null;
+		consoleSessions.remove(c.getId());
+
+		ConsolesFragment.UpdateConsoleRecords();
+	}
+
+	public ConsoleSession getConsole(String id) {
+		if (id == null)
+			return null;
+		if (consoleSessions.containsKey(id)) {
+			return consoleSessions.get(id);
+		}
+		return null;
+	}
+
+	public List<String> getConsoleListArray() {
+		List<String> list = new CopyOnWriteArrayList<String>();
+
+		for (int i = 0; i < consoleSessions.size(); i++)
+			list.add("["
+					+ consoleSessions.get(
+							consoleSessions.keySet().toArray()[i].toString())
+							.getId()
+					+ "] "
+					+ consoleSessions.get(
+							consoleSessions.keySet().toArray()[i].toString())
+							.getTitle());
+
+		return list;
+	}
+
+	public void notifySessionWrite(String id) {
+		if (controlSessions.containsKey(id)) {
+			controlSessions.get(id).pingReadListener();
+		}
+	}
+
+	public void notifySessionNewRead(String id, String data) {
+		if (controlSessions.containsKey(id)) {
+			controlSessions.get(id).newRead(data);
+		}
+	}
+
+	public void notifySessionNewRead(String id, byte[] data) {
+		if (controlSessions.containsKey(id)) {
+			controlSessions.get(id).newRead(data);
+		}
+	}
+
+	public void destroySession(String id) {
+		if (controlSessions.containsKey(id)) {
+			HostItem hostItem = MainService.hostsList.get(controlSessions.get(id).getLinkedHostId());
+			
+			if (hostItem.getActiveSessions().containsKey(controlSessions.get(id).getType().toLowerCase()) &&
+					hostItem.getActiveSessions().get(controlSessions.get(id).getType().toLowerCase()).contains(id))
+				hostItem.getActiveSessions().get(controlSessions.get(id).getType().toLowerCase()).remove(id);
+
+			hostItem.setPwned(hostItem.getActiveSessions().get("shell").size() +
+					hostItem.getActiveSessions().get("meterpreter").size() > 0 ? true: false);
+			
+			controlSessions.get(id).destroy();
+			if (currentControlWindowId == id)
+				currentControlWindowId = null;
+			controlSessions.remove(id);
+
+			for (int i = 0; i < controlSessionsList.size(); i++)
+				if (controlSessionsList.get(i).getId() == id) {
+					controlSessionsList.remove(i);
+					break;
+				}
+
+			ControlSessionsFragment.updateSessionsRecords();
+			HostsFragment.updateHostsRecords();
+		}
+	}
+
+	public void notifyDestroyedSession(String stringExtra) {
+		updateSessionsRemoteInfo();
+	}
+
+	public void closeSessionWindow(String id) {
+		if (controlSessions.containsKey(id)) {
+			controlSessions.get(id).setWindowActive(false, null);
+			currentControlWindowId = null;
+		}
+	}
+	
+	public void getPreControlSession() {
+		controlSessions.clear();
+		controlSessionsList.clear();
+		updateSessionsRemoteInfo();
+		
+		Converter mapCon;
+		Map<String, Value> info = null;
+		String host;
+		boolean wasFound;
+		HostItem hostItem = null;
+		
+		for (Map.Entry<String, Value> entry : sessionsRemoteInfo.entrySet()) {
+			
+			try {
+
+				mapCon = new Converter(entry.getValue().asMapValue());
+				info = mapCon.read(tMap(TString, TValue));
+				mapCon.close();
+
+				if (info.containsKey("tunnel_peer")) {
+					wasFound = false;
+					host = info.get("tunnel_peer").asRawValue().getString().split(":")[0];
+					
+					for (HostItem item : MainService.hostsList) {
+						if (item.getHost().equals(host)) {
+							item.setPwned(true);
+							if (info.containsKey("type")
+									&& item.getActiveSessions().containsKey(info.get("type").asRawValue().getString())
+									&& !item.getActiveSessions().get(info.get("type").asRawValue().getString()).contains(entry.getKey()))
+								item.getActiveSessions().get(info.get("type").asRawValue().getString()).add(entry.getKey());
+							hostItem = item;
+							wasFound = true;
+							break;
+						}
+					}
+
+					if (!wasFound) {
+						hostItem = new HostItem(context, host);
+						hostItem.setPwned(true);
+
+						if (info.containsKey("type")
+								&& hostItem.getActiveSessions().containsKey(info.get("type").asRawValue().getString())
+								&& !hostItem.getActiveSessions().get(info.get("type").asRawValue().getString()).contains(entry.getKey()))
+							hostItem.getActiveSessions().get(info.get("type").asRawValue().getString()).add(entry.getKey());
+
+						hostItem.scanPorts();
+						MainService.hostsList.add(hostItem);
+					}
+					
+					if (info.containsKey("platform"))
+						hostItem.setOS(info.get("platform").asRawValue().getString());
+				}
+
+			} catch (Exception e) {
+			}
+			
+			ConsoleSessionParams params = new ConsoleSessionParams();
+			params.setCmdViewId(R.id.consoleRead);
+			params.setPromptViewId(R.id.attackHall);
+			params.setAcivity(ConsoleActivity.getActivity());
+
+			ControlSession session = null;
+			MainService.sessionMgr.getNewSession(session, info.get("type").asRawValue().getString(), entry.getKey(), params);
+			session = MainService.sessionMgr.getSession(entry.getKey());
+			session.setLinkedHostId(MainService.hostsList.indexOf(hostItem));
+			info.clear();
+			
+		}
+			
+	}
+}

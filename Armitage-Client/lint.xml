@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<lint>
+    <issue id="DefaultLocale" severity="ignore" />
+    <issue id="NewApi" severity="ignore">
+        <ignore path="src/com/shetouane/armitage/MainActivity.java" />
+    </issue>
+    <issue id="SdCardPath" severity="ignore" />
+    <issue id="UseSparseArrays" severity="ignore" />
+</lint>

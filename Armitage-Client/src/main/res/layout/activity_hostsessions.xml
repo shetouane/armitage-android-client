@@ -1,0 +1,72 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+
+    <TextView
+        android:id="@+id/sessionHost"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:text="255.255.255.255"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <TextView
+        android:id="@+id/sessionDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/sessionHost"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="Please select session from list"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#555555"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <ListView
+        android:id="@+id/sessionList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/sessionDetails"
+        android:layout_marginTop="10dp"
+        android:background="@android:color/white"
+        android:maxHeight="100dp" >
+
+    </ListView>
+
+    <ListView
+        android:id="@+id/sessionCommandsList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/sessionList" >
+
+    </ListView>
+
+    <TextView
+      	android:id="@+id/emptyView"
+      	android:layout_below="@+id/sessionList"
+      	android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+      	android:text="No Available Commands, Reload Commands List."
+      	android:gravity="center"
+
+      	android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#777777"
+ 	    android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+    </TextView>
+    
+</RelativeLayout>

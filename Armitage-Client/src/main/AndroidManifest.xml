@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.shetouane.armitage"
+    android:versionCode="1"
+    android:versionName="1.0b" android:installLocation="auto">
+
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="29" />
+    
+   	<uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@android:style/Theme.Holo.Light" >
+        
+        
+        <activity
+            android:name="com.shetouane.armitage.activities.SplashActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"   
+            android:exported="true"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity  
+            android:label="Armitage"
+            android:launchMode="singleTask"
+            android:name="com.shetouane.armitage.MainActivity">
+        </activity>
+        
+        <service     
+            android:launchMode="singleInstance"
+            android:name="com.shetouane.armitage.MainService"
+            android:enabled="true" >
+        </service>
+        
+        <activity 
+            android:label="Settings"
+            android:name="com.shetouane.armitage.activities.SettingsActivity">
+        </activity>
+
+        <activity 
+            android:label="Attack Wizard"
+            android:name="com.shetouane.armitage.activities.AttackWizardActivity">
+        </activity>
+
+        <service 
+            android:name="HeadService">           
+        </service>
+        
+        <activity 
+            android:name="com.shetouane.armitage.activities.ModuleOptionsActivity"
+            android:label="Module Options"
+            android:windowSoftInputMode="adjustPan|adjustResize">           
+        </activity>
+        
+        <activity 
+            android:label="Console Session"
+            android:name="com.shetouane.armitage.console.ConsoleActivity">
+        </activity>
+        
+        <activity 
+            android:label="Set Payload"
+            android:name="com.shetouane.armitage.activities.PayloadChooserActivity">
+        </activity>
+        
+        <activity 
+            android:theme="@style/Theme.PageIndicatorDefaults"
+            android:label="Attack Hall"
+            android:name="com.shetouane.armitage.activities.AttackHallActivity">
+        </activity>
+        
+        <activity 
+            android:label="Meterpreter Session"
+            android:name="com.shetouane.armitage.plugins.MeterpreterActivity">
+        </activity>
+        
+        <service android:name="com.shetouane.armitage.webserver.WebServerService"></service>
+        
+        <activity 
+            android:label="Host Sessions"
+            android:name="com.shetouane.armitage.activities.HostSessionsActivity">
+        </activity>
+        <activity android:name="com.shetouane.armitage.plugins.ImageViewerActivity"></activity>
+        <activity android:name="com.shetouane.armitage.plugins.ProcessesActivity" android:label="Processes List"></activity>
+               
+    </application>
+
+</manifest>

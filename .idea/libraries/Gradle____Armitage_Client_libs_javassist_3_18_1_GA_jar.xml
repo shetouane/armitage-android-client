@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: ./Armitage-Client/libs/javassist-3.18.1-GA.jar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Armitage-Client/libs/javassist-3.18.1-GA.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

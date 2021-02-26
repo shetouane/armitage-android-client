@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Armitage</string>
+    <string name="action_settings">Settings</string>
+    <string name="about_armitage">About Armitage</string>
+    <string name="drawer_open">Open</string>
+    <string name="drawer_close">Close</string>
+    <string name="exit_armitage">Exit Armitage</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    
+    <string name="armitage_connectionfailed">ConnectionFailed: Please try again.</string>
+    <string name="armitage_authenticationfailed">AuthenticationFailed: Please check that your credentials are valid.</string>
+    <string name="armitage_connectiontimeout">ConnectionTimeout: Please check that server is running.</string>
+    <string name="armitage_modulesnotloaded">Modules not loaded yet.</string>
+    <string name="armitage_notconnected">You have to be connected.</string>
+
+</resources>

@@ -1,0 +1,74 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    tools:context=".AttackWizardActivity" >
+
+     <ProgressBar
+         android:id="@+id/progress2"
+         style="?android:attr/progressBarStyleHorizontal"
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content"
+         android:layout_alignParentTop="true"
+         android:translationY="-7.5dp" />
+              	
+    <Button
+        android:id="@+id/cmdLaunchAttack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="10dp"
+        android:onClick="launchAttack"
+        android:text="Launch Attack" />
+
+    <TextView
+        android:id="@+id/attackWizard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginRight="10dp"
+        android:text="Hello Friend! *THIS SECTION IS STILL NOT WORKING* Before you launch your attack you have to add hosts, so lets start importing hosts from file or manually.\n\nTo add hosts select:  Menu -> Add Hosts"
+        android:textSize="15sp"
+        android:typeface="monospace" />
+
+    <ListView
+        android:id="@+id/targetsListView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/cmdLaunchAttack"
+        android:layout_below="@+id/attackWizard"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp" >
+
+    </ListView>
+
+ 		    <TextView
+        android:id="@+id/attackHall"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/attackWizard"
+        android:layout_above="@+id/cmdLaunchAttack"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="15dp"
+        android:text="No Hosts"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#777777"/>
+    
+    <TextView
+        android:id="@+id/targetsCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/cmdLaunchAttack"
+        android:layout_alignBottom="@+id/cmdLaunchAttack"
+        android:layout_alignLeft="@+id/attackWizard"
+        android:text="TextView" />
+
+</RelativeLayout>
+
+

@@ -1,0 +1,36 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 22
+    buildToolsVersion "25.0.3"
+
+    defaultConfig {
+        applicationId "com.shetouane.armitage"
+        minSdkVersion 11
+        targetSdkVersion 22
+        signingConfig signingConfigs.debug
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    ndkVersion '22.0.7026061'
+}
+
+dependencies {
+    implementation project(':library')
+    implementation project(':scaleImageView')
+    implementation files('libs/android-support-v4.jar')
+    implementation files('libs/commons-lang3-3.1.jar')
+    implementation files('libs/javassist-3.18.1-GA.jar')
+    implementation files('libs/json-simple-1.1.1.jar')
+    implementation files('libs/msgpack-0.6.12.jar')
+    implementation files('libs/msgpack-core-0.7.0-M1.jar')
+}

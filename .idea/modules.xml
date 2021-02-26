@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/armitage-android-client.iml" filepath="$PROJECT_DIR$/.idea/modules/armitage-android-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Armitage-Client/armitage-android-client.Armitage-Client.iml" filepath="$PROJECT_DIR$/.idea/modules/Armitage-Client/armitage-android-client.Armitage-Client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/library/armitage-android-client.library.iml" filepath="$PROJECT_DIR$/.idea/modules/library/armitage-android-client.library.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/scaleImageView/armitage-android-client.scaleImageView.iml" filepath="$PROJECT_DIR$/.idea/modules/scaleImageView/armitage-android-client.scaleImageView.iml" />
+    </modules>
+  </component>
+</project>

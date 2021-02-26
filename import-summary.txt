@@ -1,0 +1,264 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Manifest Merging:
+-----------------
+Your project uses libraries that provide manifests, and your Eclipse
+project did not explicitly turn on manifest merging. In Android Gradle
+projects, manifests are always merged (meaning that contents from your
+libraries' manifests will be merged into the app manifest. If you had
+manually copied contents from library manifests into your app manifest
+you may need to remove these for the app to build correctly.
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+From ScaleImageView:
+* .gitignore
+* License
+* README.md
+From SplashActivity:
+* .gitignore
+* ic_launcher-web.png
+* proguard-project.txt
+* scale-imageview\
+* scale-imageview\.classpath
+* scale-imageview\.gitignore
+* scale-imageview\.project
+* scale-imageview\.settings\
+* scale-imageview\.settings\org.eclipse.jdt.core.prefs
+* scale-imageview\AndroidManifest.xml
+* scale-imageview\License
+* scale-imageview\README.md
+* scale-imageview\bin\
+* scale-imageview\bin\AndroidManifest.xml
+* scale-imageview\bin\R.txt
+* scale-imageview\bin\classes\
+* scale-imageview\bin\classes\com\
+* scale-imageview\bin\classes\com\matabii\
+* scale-imageview\bin\classes\com\matabii\dev\
+* scale-imageview\bin\classes\com\matabii\dev\scaleimageview\
+* scale-imageview\bin\classes\com\matabii\dev\scaleimageview\BuildConfig.class
+* scale-imageview\bin\classes\com\matabii\dev\scaleimageview\R$attr.class
+* scale-imageview\bin\classes\com\matabii\dev\scaleimageview\R$drawable.class
+* scale-imageview\bin\classes\com\matabii\dev\scaleimageview\R$id.class
+* scale-imageview\bin\classes\com\matabii\dev\scaleimageview\R$layout.class
+* scale-imageview\bin\classes\com\matabii\dev\scaleimageview\R$string.class
+* scale-imageview\bin\classes\com\matabii\dev\scaleimageview\R.class
+* scale-imageview\bin\classes\com\matabii\dev\scaleimageview\ScaleImageView$1.class
+* scale-imageview\bin\classes\com\matabii\dev\scaleimageview\ScaleImageView.class
+* scale-imageview\bin\classes\com\matabii\dev\scaleimageview\ScaleImageViewActivity.class
+* scale-imageview\bin\jarlist.cache
+* scale-imageview\bin\res\
+* scale-imageview\bin\res\crunch\
+* scale-imageview\bin\res\crunch\drawable\
+* scale-imageview\bin\res\crunch\drawable\icon.png
+* scale-imageview\bin\res\crunch\drawable\image.png
+* scale-imageview\bin\scaleimageview.jar
+* scale-imageview\gen\
+* scale-imageview\gen\com\
+* scale-imageview\gen\com\matabii\
+* scale-imageview\gen\com\matabii\dev\
+* scale-imageview\gen\com\matabii\dev\scaleimageview\
+* scale-imageview\gen\com\matabii\dev\scaleimageview\BuildConfig.java
+* scale-imageview\gen\com\matabii\dev\scaleimageview\R.java
+* scale-imageview\project.properties
+* scale-imageview\res\
+* scale-imageview\res\drawable\
+* scale-imageview\res\drawable\icon.png
+* scale-imageview\res\drawable\image.png
+* scale-imageview\res\drawable\sample.jpg
+* scale-imageview\res\layout\
+* scale-imageview\res\layout\main.xml
+* scale-imageview\res\values\
+* scale-imageview\res\values\strings.xml
+* scale-imageview\src\
+* scale-imageview\src\com\
+* scale-imageview\src\com\matabii\
+* scale-imageview\src\com\matabii\dev\
+* scale-imageview\src\com\matabii\dev\scaleimageview\
+* scale-imageview\src\com\matabii\dev\scaleimageview\ScaleImageView.java
+* scale-imageview\src\com\matabii\dev\scaleimageview\ScaleImageViewActivity.java
+* viewpage-indicator\
+* viewpage-indicator\.gitignore
+* viewpage-indicator\CHANGELOG.md
+* viewpage-indicator\README.md
+* viewpage-indicator\checkstyle.xml
+* viewpage-indicator\library\
+* viewpage-indicator\library\.classpath
+* viewpage-indicator\library\.project
+* viewpage-indicator\library\.settings\
+* viewpage-indicator\library\.settings\org.eclipse.jdt.core.prefs
+* viewpage-indicator\library\AndroidManifest.xml
+* viewpage-indicator\library\bin\
+* viewpage-indicator\library\bin\AndroidManifest.xml
+* viewpage-indicator\library\bin\R.txt
+* viewpage-indicator\library\bin\classes\
+* viewpage-indicator\library\bin\classes\com\
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\BuildConfig.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\CirclePageIndicator$SavedState$1.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\CirclePageIndicator$SavedState.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\CirclePageIndicator.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\IconPageIndicator$1.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\IconPageIndicator.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\IconPagerAdapter.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\IcsLinearLayout.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\LinePageIndicator$SavedState$1.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\LinePageIndicator$SavedState.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\LinePageIndicator.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\PageIndicator.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\R$attr.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\R$bool.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\R$color.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\R$dimen.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\R$drawable.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\R$id.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\R$integer.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\R$style.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\R$styleable.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\R.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\TabPageIndicator$1.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\TabPageIndicator$2.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\TabPageIndicator$OnTabReselectedListener.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\TabPageIndicator$TabView.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\TabPageIndicator.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\TitlePageIndicator$IndicatorStyle.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\TitlePageIndicator$LinePosition.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\TitlePageIndicator$OnCenterItemClickListener.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\TitlePageIndicator$SavedState$1.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\TitlePageIndicator$SavedState.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\TitlePageIndicator.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\UnderlinePageIndicator$1.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\UnderlinePageIndicator$2.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\UnderlinePageIndicator$SavedState$1.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\UnderlinePageIndicator$SavedState.class
+* viewpage-indicator\library\bin\classes\com\viewpagerindicator\UnderlinePageIndicator.class
+* viewpage-indicator\library\bin\jarlist.cache
+* viewpage-indicator\library\bin\library.jar
+* viewpage-indicator\library\bin\res\
+* viewpage-indicator\library\bin\res\crunch\
+* viewpage-indicator\library\bin\res\crunch\drawable-hdpi\
+* viewpage-indicator\library\bin\res\crunch\drawable-hdpi\vpi__tab_selected_focused_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-hdpi\vpi__tab_selected_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-hdpi\vpi__tab_selected_pressed_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-hdpi\vpi__tab_unselected_focused_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-hdpi\vpi__tab_unselected_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-hdpi\vpi__tab_unselected_pressed_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-mdpi\
+* viewpage-indicator\library\bin\res\crunch\drawable-mdpi\vpi__tab_selected_focused_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-mdpi\vpi__tab_selected_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-mdpi\vpi__tab_selected_pressed_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-mdpi\vpi__tab_unselected_focused_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-mdpi\vpi__tab_unselected_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-mdpi\vpi__tab_unselected_pressed_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-xhdpi\
+* viewpage-indicator\library\bin\res\crunch\drawable-xhdpi\vpi__tab_selected_focused_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-xhdpi\vpi__tab_selected_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-xhdpi\vpi__tab_selected_pressed_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-xhdpi\vpi__tab_unselected_focused_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-xhdpi\vpi__tab_unselected_holo.9.png
+* viewpage-indicator\library\bin\res\crunch\drawable-xhdpi\vpi__tab_unselected_pressed_holo.9.png
+* viewpage-indicator\library\gen\
+* viewpage-indicator\library\gen\com\
+* viewpage-indicator\library\gen\com\viewpagerindicator\
+* viewpage-indicator\library\gen\com\viewpagerindicator\BuildConfig.java
+* viewpage-indicator\library\gen\com\viewpagerindicator\R.java
+* viewpage-indicator\library\libs\
+* viewpage-indicator\library\libs\android-support-v4.jar
+* viewpage-indicator\library\pom.xml
+* viewpage-indicator\library\project.properties
+* viewpage-indicator\library\res\
+* viewpage-indicator\library\res\color\
+* viewpage-indicator\library\res\color\vpi__dark_theme.xml
+* viewpage-indicator\library\res\color\vpi__light_theme.xml
+* viewpage-indicator\library\res\drawable-hdpi\
+* viewpage-indicator\library\res\drawable-hdpi\vpi__tab_selected_focused_holo.9.png
+* viewpage-indicator\library\res\drawable-hdpi\vpi__tab_selected_holo.9.png
+* viewpage-indicator\library\res\drawable-hdpi\vpi__tab_selected_pressed_holo.9.png
+* viewpage-indicator\library\res\drawable-hdpi\vpi__tab_unselected_focused_holo.9.png
+* viewpage-indicator\library\res\drawable-hdpi\vpi__tab_unselected_holo.9.png
+* viewpage-indicator\library\res\drawable-hdpi\vpi__tab_unselected_pressed_holo.9.png
+* viewpage-indicator\library\res\drawable-mdpi\
+* viewpage-indicator\library\res\drawable-mdpi\vpi__tab_selected_focused_holo.9.png
+* viewpage-indicator\library\res\drawable-mdpi\vpi__tab_selected_holo.9.png
+* viewpage-indicator\library\res\drawable-mdpi\vpi__tab_selected_pressed_holo.9.png
+* viewpage-indicator\library\res\drawable-mdpi\vpi__tab_unselected_focused_holo.9.png
+* viewpage-indicator\library\res\drawable-mdpi\vpi__tab_unselected_holo.9.png
+* viewpage-indicator\library\res\drawable-mdpi\vpi__tab_unselected_pressed_holo.9.png
+* viewpage-indicator\library\res\drawable-xhdpi\
+* viewpage-indicator\library\res\drawable-xhdpi\vpi__tab_selected_focused_holo.9.png
+* viewpage-indicator\library\res\drawable-xhdpi\vpi__tab_selected_holo.9.png
+* viewpage-indicator\library\res\drawable-xhdpi\vpi__tab_selected_pressed_holo.9.png
+* viewpage-indicator\library\res\drawable-xhdpi\vpi__tab_unselected_focused_holo.9.png
+* viewpage-indicator\library\res\drawable-xhdpi\vpi__tab_unselected_holo.9.png
+* viewpage-indicator\library\res\drawable-xhdpi\vpi__tab_unselected_pressed_holo.9.png
+* viewpage-indicator\library\res\drawable\
+* viewpage-indicator\library\res\drawable\vpi__tab_indicator.xml
+* viewpage-indicator\library\res\values\
+* viewpage-indicator\library\res\values\vpi__attrs.xml
+* viewpage-indicator\library\res\values\vpi__colors.xml
+* viewpage-indicator\library\res\values\vpi__defaults.xml
+* viewpage-indicator\library\res\values\vpi__styles.xml
+* viewpage-indicator\library\src\
+* viewpage-indicator\library\src\com\
+* viewpage-indicator\library\src\com\viewpagerindicator\
+* viewpage-indicator\library\src\com\viewpagerindicator\CirclePageIndicator.java
+* viewpage-indicator\library\src\com\viewpagerindicator\IconPageIndicator.java
+* viewpage-indicator\library\src\com\viewpagerindicator\IconPagerAdapter.java
+* viewpage-indicator\library\src\com\viewpagerindicator\IcsLinearLayout.java
+* viewpage-indicator\library\src\com\viewpagerindicator\LinePageIndicator.java
+* viewpage-indicator\library\src\com\viewpagerindicator\PageIndicator.java
+* viewpage-indicator\library\src\com\viewpagerindicator\TabPageIndicator.java
+* viewpage-indicator\library\src\com\viewpagerindicator\TitlePageIndicator.java
+* viewpage-indicator\library\src\com\viewpagerindicator\UnderlinePageIndicator.java
+* viewpage-indicator\pom.xml
+From library:
+* pom.xml
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+In ScaleImageView:
+* AndroidManifest.xml => scaleImageView\src\main\AndroidManifest.xml
+* assets\ => scaleImageView\src\main\assets
+* res\ => scaleImageView\src\main\res\
+* src\ => scaleImageView\src\main\java\
+In library:
+* AndroidManifest.xml => library\src\main\AndroidManifest.xml
+* assets\ => library\src\main\assets
+* libs\android-support-v4.jar => library\libs\android-support-v4.jar
+* res\ => library\src\main\res\
+* src\ => library\src\main\java\
+In SplashActivity:
+* AndroidManifest.xml => splashActivity\src\main\AndroidManifest.xml
+* assets\ => splashActivity\src\main\assets
+* libs\android-support-v4.jar => splashActivity\libs\android-support-v4.jar
+* libs\commons-lang3-3.1.jar => splashActivity\libs\commons-lang3-3.1.jar
+* libs\javassist-3.18.1-GA.jar => splashActivity\libs\javassist-3.18.1-GA.jar
+* libs\json-simple-1.1.1.jar => splashActivity\libs\json-simple-1.1.1.jar
+* libs\msgpack-0.6.12.jar => splashActivity\libs\msgpack-0.6.12.jar
+* libs\msgpack-core-0.7.0-M1.jar => splashActivity\libs\msgpack-core-0.7.0-M1.jar
+* lint.xml => splashActivity\lint.xml
+* res\ => splashActivity\src\main\res\
+* src\ => splashActivity\src\main\java\
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)
