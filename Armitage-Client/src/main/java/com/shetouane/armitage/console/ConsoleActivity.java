@@ -46,11 +46,11 @@ public class ConsoleActivity extends Activity {
 			return;
 		}
 
-		
+
 		if (intent.hasExtra("precmd"))
 			((EditText) findViewById(R.id.consoleWrite))
-			.setText(intent.getStringExtra("precmd") + " ");
-		
+					.setText(intent.getStringExtra("precmd") + " ");
+
 		String type = intent.getStringExtra("type");
 
 		if (type.startsWith("current")) {
@@ -80,7 +80,7 @@ public class ConsoleActivity extends Activity {
 		setTitle("Meterpreter Session");
 		MainService.sessionMgr.switchWindow("session", session.getId(), this);
 		setupWindowTrigger();
-		
+
 		if (intent.hasExtra("cmd"))
 			new Thread(new Runnable() {
 				public void run() {
@@ -142,12 +142,12 @@ public class ConsoleActivity extends Activity {
 				.addTextChangedListener(new TextWatcher() {
 					@Override
 					public void onTextChanged(CharSequence s, int start,
-							int before, int count) {
+											  int before, int count) {
 					}
 
 					@Override
 					public void beforeTextChanged(CharSequence s, int start,
-							int count, int after) {
+												  int count, int after) {
 					}
 
 					@Override
@@ -166,10 +166,11 @@ public class ConsoleActivity extends Activity {
 
 			@Override
 			public boolean onEditorAction(TextView v, int keyCode,
-					KeyEvent event) {
-				if ((event!=null && event.getKeyCode() != KeyEvent.KEYCODE_ENTER )
-						&& (event.getAction() == KeyEvent.ACTION_DOWN)) {
+										  KeyEvent event) {
+				if ((event !=null && event.getAction() == KeyEvent.ACTION_DOWN)
+						&& (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
 					InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+					assert imm != null;
 					imm.hideSoftInputFromWindow(commander.getWindowToken(), 0);
 					cmd = v.getText().toString();
 					v.setText("");
@@ -196,26 +197,26 @@ public class ConsoleActivity extends Activity {
 		int keyCode = event.getKeyCode();
 
 		switch (keyCode) {
-		case KeyEvent.KEYCODE_VOLUME_UP:
-			if (action == KeyEvent.ACTION_UP) {
-				((TextView) findViewById(R.id.consoleRead))
-						.setTextSize(++consoleFontSize);
-			}
-			return true;
-		case KeyEvent.KEYCODE_VOLUME_DOWN:
-			if (action == KeyEvent.ACTION_UP) {
-				((TextView) findViewById(R.id.consoleRead))
-						.setTextSize(--consoleFontSize);
-			}
-			return true;
-		default:
-			return super.dispatchKeyEvent(event);
+			case KeyEvent.KEYCODE_VOLUME_UP:
+				if (action == KeyEvent.ACTION_UP) {
+					((TextView) findViewById(R.id.consoleRead))
+							.setTextSize(++consoleFontSize);
+				}
+				return true;
+			case KeyEvent.KEYCODE_VOLUME_DOWN:
+				if (action == KeyEvent.ACTION_UP) {
+					((TextView) findViewById(R.id.consoleRead))
+							.setTextSize(--consoleFontSize);
+				}
+				return true;
+			default:
+				return super.dispatchKeyEvent(event);
 		}
 	}
 
 	@Override
 	public void onBackPressed() {
-		if (intent.hasExtra("sessionCmd") && 
+		if (intent.hasExtra("sessionCmd") &&
 				intent.getBooleanExtra("sessionCmd", true)) {
 			if (session != null)
 				MainService.sessionMgr
@@ -227,16 +228,16 @@ public class ConsoleActivity extends Activity {
 			builder.setTitle(
 					"Terminate "
 							+ (console != null ? "Console" : WordUtils
-									.capitalize(session.getType())))
+							.capitalize(session.getType())))
 					.setMessage(
 							"Do you want to terminate "
 									+ (console != null ? "console" : session
-											.getType()) + " ?")
+									.getType()) + " ?")
 					.setIcon(android.R.drawable.ic_menu_close_clear_cancel)
 					.setPositiveButton("Yes",
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
-										int which) {
+													int which) {
 									if (console != null && console.isReady())
 										MainService.sessionMgr
 												.destroyConsole(console);
@@ -249,7 +250,7 @@ public class ConsoleActivity extends Activity {
 					.setNegativeButton("Run in Background",
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
-										int which) {
+													int which) {
 									if (console != null)
 										MainService.sessionMgr
 												.closeConsoleWindow(console.getId());
@@ -267,45 +268,45 @@ public class ConsoleActivity extends Activity {
 		getMenuInflater().inflate(R.menu.console_activity, menu);
 		return true;
 	}
-	
+
 	private static Activity activity;
 	public static Activity getActivity() {
 		return activity;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
 		switch (item.getItemId()) {
-		case R.id.mnuClearHistory:
-			if (console != null)
-				console.clearHistory();
-			else if (session != null)
-				session.clearHistory();
-			return true;
-			
-		case R.id.mnuTerminate:
-			if (console != null && console.isReady())
-				MainService.sessionMgr
-						.destroyConsole(console);
-			else if (session != null && session.isReady())
-				MainService.sessionMgr
-						.destroySession(session.getId());
-			finish();
-			return true;
-			
-		case R.id.mnuConsoleBG:
-			if (console != null)
-				MainService.sessionMgr
-						.closeConsoleWindow(console.getId());
-			else if (session != null)
-				MainService.sessionMgr
-						.closeSessionWindow(session.getId());
-			finish();
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+			case R.id.mnuClearHistory:
+				if (console != null)
+					console.clearHistory();
+				else if (session != null)
+					session.clearHistory();
+				return true;
+
+			case R.id.mnuTerminate:
+				if (console != null && console.isReady())
+					MainService.sessionMgr
+							.destroyConsole(console);
+				else if (session != null && session.isReady())
+					MainService.sessionMgr
+							.destroySession(session.getId());
+				finish();
+				return true;
+
+			case R.id.mnuConsoleBG:
+				if (console != null)
+					MainService.sessionMgr
+							.closeConsoleWindow(console.getId());
+				else if (session != null)
+					MainService.sessionMgr
+							.closeSessionWindow(session.getId());
+				finish();
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 }

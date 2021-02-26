@@ -186,11 +186,11 @@ public class ScaleImageView extends ImageView implements OnTouchListener {
     private float distance(float x0, float x1, float y0, float y1) {
         float x = x0 - x1;
         float y = y0 - y1;
-        return FloatMath.sqrt(x * x + y * y);
+        return (float) Math.sqrt(x * x + y * y);
     }
 
     private float dispDistance() {
-        return FloatMath.sqrt(mWidth * mWidth + mHeight * mHeight);
+        return (float) Math.sqrt(mWidth * mWidth + mHeight * mHeight);
     }
 
     @Override

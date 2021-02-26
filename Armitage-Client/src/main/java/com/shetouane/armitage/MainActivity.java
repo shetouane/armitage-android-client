@@ -1,26 +1,10 @@
 package com.shetouane.armitage;
 
-import java.util.ArrayList;
-
-import com.shetouane.armitage.activities.AttackHallActivity;
-import com.shetouane.armitage.activities.AttackWizardActivity;
-import com.shetouane.armitage.activities.HostSessionsActivity;
-import com.shetouane.armitage.activities.ModuleOptionsActivity;
-import com.shetouane.armitage.activities.SettingsActivity;
-import com.shetouane.armitage.console.ConsoleActivity;
-import com.shetouane.armitage.console.ControlSession;
-import com.shetouane.armitage.structures.SidebarItem;
-import com.shetouane.armitage.structures.SidebarAdapter;
-import com.shetouane.armitage.structures.ModuleItem;
-import com.shetouane.armitage.structures.SidebarSessionsAdapter;
-
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.StrictMode;
-import android.provider.Settings;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
@@ -31,21 +15,39 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
+import android.os.Build;
+import android.os.Bundle;
+import android.os.StrictMode;
+import android.provider.Settings;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MenuItem.OnActionExpandListener;
-
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.SearchView.OnQueryTextListener;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import com.shetouane.armitage.activities.AttackHallActivity;
+import com.shetouane.armitage.activities.AttackWizardActivity;
+import com.shetouane.armitage.activities.HostSessionsActivity;
+import com.shetouane.armitage.activities.ModuleOptionsActivity;
+import com.shetouane.armitage.activities.SettingsActivity;
+import com.shetouane.armitage.console.ConsoleActivity;
+import com.shetouane.armitage.console.ControlSession;
+import com.shetouane.armitage.structures.ModuleItem;
+import com.shetouane.armitage.structures.SidebarAdapter;
+import com.shetouane.armitage.structures.SidebarItem;
+import com.shetouane.armitage.structures.SidebarSessionsAdapter;
+
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class MainActivity extends Activity implements OnQueryTextListener {
 
@@ -54,7 +56,6 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 	public Menu main_menu;
 	private Intent serviceIntent;
 	private NotificationManager mNotificationManager;
-	private Notification noti;
 	public static SharedPreferences prefs;
 	private Activity activity;
 	private String con_txtUsername, con_txtPassword, con_txtHost, con_txtPort;
@@ -63,7 +64,7 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 	//public static boolean debug_mode = false;
 	private ListView sidebarList;
 	private SidebarAdapter sidebarAdapter;
-	private ArrayList<SidebarItem> sidebarItems = new ArrayList<SidebarItem>();
+	private final ArrayList<SidebarItem> sidebarItems = new ArrayList<>();
 	private DrawerLayout sidebarLayout;
 	private ActionBarDrawerToggle sidebarToggle;
 	private ProgressDialog pd;
@@ -79,55 +80,45 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 		serviceIntent = new Intent(this, MainService.class);
 		startService(serviceIntent);
 
-		getActionBar().setDisplayHomeAsUpEnabled(true);
+		Objects.requireNonNull(getActionBar()).setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
 
-		sessionsList = (ListView)findViewById(R.id.sidebarSessionsListview);
-		sessionsList.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view, final int position, long id)  {
-				if (isConnected
-						&& MainService.checkConnection(MainActivity.this)) {
-					
-					final ControlSession session = (ControlSession)(sessionsList.getItemAtPosition(position));
-					AlertDialog.Builder sessionDlg = new AlertDialog.Builder(activity);
-					sessionDlg.setTitle("How to interact with session ?")
-					.setIcon(android.R.drawable.ic_dialog_info)
-					.setCancelable(true)					
-					.setPositiveButton("VisualCommander",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog, int which) {
-									
-									startActivity(
-											new Intent(getApplicationContext(), 
-													HostSessionsActivity.class)
-									.putExtra("hostId", session.getLinkedHostId())
-									.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK));	
-								}
-							})
-					.setNegativeButton("Console",
-							new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int which) {
-							Intent intent = new Intent(getApplicationContext(), ConsoleActivity.class);
-							intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-							intent.putExtra("type", "current." + session.getType());
-							String id = session.getId();
-							intent.putExtra("id", id);
-							startActivity(intent);
-						}
-					})
-					.show();
-					
-					sidebarLayout.closeDrawers();
-				}
-				else
-					Toast.makeText(getApplicationContext(),
-							R.string.armitage_notconnected,
-							Toast.LENGTH_SHORT).show();
+		sessionsList = findViewById(R.id.sidebarSessionsListview);
+		sessionsList.setOnItemClickListener((parent, view, position, id) -> {
+			if (isConnected
+					&& MainService.checkConnection(MainActivity.this)) {
+
+				final ControlSession session = (ControlSession)(sessionsList.getItemAtPosition(position));
+				AlertDialog.Builder sessionDlg = new AlertDialog.Builder(activity);
+				sessionDlg.setTitle("How to interact with session ?")
+						.setIcon(android.R.drawable.ic_dialog_info)
+						.setCancelable(true)
+						.setPositiveButton("VisualCommander",
+								(dialog, which) -> startActivity(
+										new Intent(getApplicationContext(),
+												HostSessionsActivity.class)
+												.putExtra("hostId", session.getLinkedHostId())
+												.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)))
+						.setNegativeButton("Console",
+								(dialog, which) -> {
+									Intent intent = new Intent(getApplicationContext(), ConsoleActivity.class);
+									intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+									intent.putExtra("type", "current." + session.getType());
+									String id1 = session.getId();
+									intent.putExtra("id", id1);
+									startActivity(intent);
+								})
+						.show();
+
+				sidebarLayout.closeDrawers();
 			}
+			else
+				Toast.makeText(getApplicationContext(),
+						R.string.armitage_notconnected,
+						Toast.LENGTH_SHORT).show();
 		});
-		
-		sidebarLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+		sidebarLayout = findViewById(R.id.drawer_layout);
 		sidebarToggle = new ActionBarDrawerToggle(this, sidebarLayout,
 				R.drawable.ic_drawer, R.string.drawer_open,
 				R.string.drawer_close) {
@@ -144,51 +135,47 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 
 		sidebarLayout.setDrawerListener(sidebarToggle);
 		sidebarAdapter = new SidebarAdapter(this, sidebarItems);
-		sidebarList = (ListView) findViewById(R.id.listview);
+		sidebarList = findViewById(R.id.listview);
 		sidebarList.setAdapter(sidebarAdapter);
 		sidebarList.setOnItemClickListener(new ModulesListItemClickListener());
 
-		
 
-		modulesList = (ListView) findViewById(R.id.modulesListView);
+
+		modulesList = findViewById(R.id.modulesListView);
 		modulesList.setEmptyView(findViewById(R.id.imageView11));
-		modulesList.setOnItemClickListener(new OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				if (isConnected
-						&& MainService.checkConnection(MainActivity.this)) {
-					Object o = modulesList.getItemAtPosition(position);
-					ModuleItem m = (ModuleItem) o;
+		modulesList.setOnItemClickListener((parent, view, position, id) -> {
+			if (isConnected
+					&& MainService.checkConnection(MainActivity.this)) {
+				Object o = modulesList.getItemAtPosition(position);
+				ModuleItem m = (ModuleItem) o;
 
-					if (m.getType().contains("encoder")
-							|| m.getType().contains("nop")
-							|| m.getType().contains("post"))
-						Toast.makeText(getApplicationContext(),
-								StaticClass.ARMITAGE_NOT_IMPLEMENTED,
-								Toast.LENGTH_SHORT).show();
-					else {
-						Intent intent = new Intent(getApplicationContext(),
-								ModuleOptionsActivity.class);
-						intent.putExtra("type", m.getType());
-						intent.putExtra("name", m.getPath());
-						intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-						getApplicationContext().startActivity(intent);
-					}
-				} else {
+				if (m.getType().contains("encoder")
+						|| m.getType().contains("nop")
+						|| m.getType().contains("post"))
 					Toast.makeText(getApplicationContext(),
-							R.string.armitage_notconnected, Toast.LENGTH_SHORT)
-							.show();
+							StaticClass.ARMITAGE_NOT_IMPLEMENTED,
+							Toast.LENGTH_SHORT).show();
+				else {
+					Intent intent = new Intent(getApplicationContext(),
+							ModuleOptionsActivity.class);
+					intent.putExtra("type", m.getType());
+					intent.putExtra("name", m.getPath());
+					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					getApplicationContext().startActivity(intent);
 				}
+			} else {
+				Toast.makeText(getApplicationContext(),
+						R.string.armitage_notconnected, Toast.LENGTH_SHORT)
+						.show();
 			}
 		});
-		
+
 		prefs = getSharedPreferences(StaticClass.ARMITAGE_PACKAGE_NAME,
 				Context.MODE_PRIVATE);
-		prefs.edit().putBoolean("isConnected", false).commit();
+		prefs.edit().putBoolean("isConnected", false).apply();
 		loadSharedPreferences();
 
-		if (android.os.Build.VERSION.SDK_INT > 9) {
+		if (android.os.Build.VERSION.SDK_INT > 11) {
 			StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
 					.permitAll().build();
 			StrictMode.setThreadPolicy(policy);
@@ -201,28 +188,15 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 				.setIcon(android.R.drawable.ic_dialog_alert)
 				.setCancelable(false)
 				.setNeutralButton("Turn on Wifi or 3G",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								startActivity(new Intent(
-										Settings.ACTION_WIFI_SETTINGS));
-							}
-						})
+						(dialog, which) -> startActivity(new Intent(
+								Settings.ACTION_WIFI_SETTINGS)))
 				.setNegativeButton("Cancel",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								dialog.dismiss();
-							}
-						})
+						(dialog, which) -> dialog.dismiss())
 				.setPositiveButton("Try again",
-						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog,
-									int which) {
-								if (!MainService
-										.checkConnection(getApplicationContext()))
-									checkConDlgBuilder.show();
-							}
+						(dialog, which) -> {
+							if (!MainService
+									.checkConnection(getApplicationContext()))
+								checkConDlgBuilder.show();
 						});
 
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
@@ -237,11 +211,11 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 		if (sessionsAdapter != null) {
 			sessionsAdapter.notifyDataSetChanged();
 			if (MainService.sessionMgr.controlSessionsList.size() == 0) {
-				((TextView)findViewById(R.id.textSessionsActive)).setVisibility(View.GONE);
+				findViewById(R.id.textSessionsActive).setVisibility(View.GONE);
 				sessionsList.setVisibility(View.GONE);
 			}
 			else {
-				((TextView)findViewById(R.id.textSessionsActive)).setVisibility(View.VISIBLE);
+				findViewById(R.id.textSessionsActive).setVisibility(View.VISIBLE);
 				sessionsList.setVisibility(View.VISIBLE);
 			}
 		}
@@ -261,8 +235,8 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 	}
 
 	private boolean titlesHas(String s) {
-		for (int i = 0; i < titles.length; i++)
-			if (titles[i].equals(s))
+		for (String title : titles)
+			if (title.equals(s))
 				return true;
 		return false;
 	}
@@ -292,14 +266,12 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 			sidebarAdapter.notifyDataSetChanged();
 	}
 
-	private MenuItem mnuSearch;
-
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 		this.main_menu = menu;
 
-		mnuSearch = menu.findItem(R.id.mnuSearch);
+		MenuItem mnuSearch = menu.findItem(R.id.mnuSearch);
 		SearchView searchView = (SearchView) mnuSearch.getActionView();
 		searchView.setOnQueryTextListener(this);
 		mnuSearch.setOnActionExpandListener(new OnActionExpandListener() {
@@ -343,6 +315,7 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 		return super.onPrepareOptionsMenu(menu);
 	}
 
+	@SuppressLint("NonConstantResourceId")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -378,101 +351,96 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 						Toast.LENGTH_SHORT).show();
 			}
 			return true; */
-		case R.id.mnuRpcSettings:
+			case R.id.mnuRpcSettings:
 
-			if (!isConnected) {
-				Intent intent = new Intent(this, SettingsActivity.class);
-				startActivity(intent);
-			} else
-				Toast.makeText(this, "You have to disconnect first",
-						Toast.LENGTH_SHORT).show();
+				if (!isConnected) {
+					Intent intent = new Intent(this, SettingsActivity.class);
+					startActivity(intent);
+				} else
+					Toast.makeText(this, "You have to disconnect first",
+							Toast.LENGTH_SHORT).show();
 
-			return true;
+				return true;
 
-		case R.id.mnuAbout:
-			String msgbox_string = "This is a Beta version\n\n"
-					+ "So expect it to be full of bugs \nv0.9.5b\n\n"
-					+ "Twitter: @Shetouane\n" + "Email: chetouane@outlook.de";
+			case R.id.mnuAbout:
+				String msgbox_string = "Version 1.0b\n\n"
+						+ "To be released at \nCairo Security Camp 2013\n\n"
+						+ "Anwar Mohamed\n" + "anwarelmakrahy@gmail.com";
 
-			AlertDialog dlg = new AlertDialog.Builder(this).create();
-			dlg.setMessage(msgbox_string);
-			dlg.setTitle(R.string.about_armitage);
-			dlg.setCancelable(true);
-			dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Ok",
-					(DialogInterface.OnClickListener) null);
-			dlg.show();
-			return true;
+				AlertDialog dlg = new AlertDialog.Builder(this).create();
+				dlg.setMessage(msgbox_string);
+				dlg.setTitle(R.string.about_armitage);
+				dlg.setCancelable(true);
+				dlg.setButton(DialogInterface.BUTTON_POSITIVE, "Ok",
+						(DialogInterface.OnClickListener) null);
+				dlg.show();
+				return true;
 
-		case R.id.mnuConnection:
-		case R.id.mnuConnectionAction:
+			case R.id.mnuConnection:
+			case R.id.mnuConnectionAction:
 
-			if (!isConnected) {
-				if (checkConSettings()) {
+				if (!isConnected) {
+					if (checkConSettings()) {
 
-					if (!MainService.checkConnection(getApplicationContext()))
-						checkConDlgBuilder.show();
-					else {
+						if (!MainService.checkConnection(getApplicationContext()))
+							checkConDlgBuilder.show();
+						else {
 
-						showConnectingProgress();
+							showConnectingProgress();
 
-						Intent tmpIntent = new Intent();
-						tmpIntent.setAction(StaticClass.ARMITAGE_CONNECT);
-						sendBroadcast(tmpIntent);
+							Intent tmpIntent = new Intent();
+							tmpIntent.setAction(StaticClass.ARMITAGE_CONNECT);
+							sendBroadcast(tmpIntent);
+						}
 					}
+				} else {
+					Intent tmpIntent = new Intent();
+					tmpIntent.setAction(StaticClass.ARMITAGE_DISCONNECT);
+					sendBroadcast(tmpIntent);
+					Disconnect();
+
+					Toast.makeText(getApplicationContext(),
+							"ConnectionDisconnected: Disconnected from server",
+							Toast.LENGTH_SHORT).show();
+
+					setNotification();
 				}
-			} else if (isConnected) {
-				Intent tmpIntent = new Intent();
-				tmpIntent.setAction(StaticClass.ARMITAGE_DISCONNECT);
-				sendBroadcast(tmpIntent);
-				Disconnect();
-
-				Toast.makeText(getApplicationContext(),
-						"ConnectionDisconnected: Disconnected from server",
-						Toast.LENGTH_SHORT).show();
-
-				setNotification();
-			}
-			return true;
+				return true;
 			// case R.id.mnuPlugins:
 			// Intent intent = new Intent(this, PluginsActivity.class);
 			// startActivity(intent);
 			// return true;
 
-		case R.id.mnuExit:
+			case R.id.mnuExit:
 
-			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setTitle(R.string.exit_armitage)
-					//.setMessage("Are you sure?")
-					.setIcon(android.R.drawable.ic_menu_close_clear_cancel)
-					.setPositiveButton("Yes",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int which) {
-									finish();
-								}
-							}).setNegativeButton("No", null)
-					.setCancelable(true).show();
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setTitle(R.string.exit_armitage)
+						//.setMessage("Are you sure?")
+						.setIcon(android.R.drawable.ic_menu_close_clear_cancel)
+						.setPositiveButton("Yes",
+								(dialog, which) -> finish()).setNegativeButton("No", null)
+						.setCancelable(true).show();
 
-			return true;
+				return true;
 
-		case R.id.mnuNewConsole:
-			Intent intent1 = new Intent(getApplicationContext(),
-					ConsoleActivity.class);
-			intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			intent1.putExtra("type", "new.console");
-			intent1.putExtra("cmd", "use multi/handler\n"
-					+ "set PAYLOAD linux/x86/meterpreter/reverse_tcp\n"
-					+ "set LHOST " + con_txtHost + "\n" + "exploit -z");
-			startActivity(intent1);
+			case R.id.mnuNewConsole:
+				Intent intent1 = new Intent(getApplicationContext(),
+						ConsoleActivity.class);
+				intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				intent1.putExtra("type", "new.console");
+				intent1.putExtra("cmd", "use multi/handler\n"
+						+ "set PAYLOAD linux/x86/meterpreter/reverse_tcp\n"
+						+ "set LHOST " + con_txtHost + "\n" + "exploit -z");
+				startActivity(intent1);
 
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+				return true;
+			default:
+				return super.onOptionsItemSelected(item);
 		}
 	}
 
 	private void showConnectingProgress() {
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		@SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute() {
@@ -480,7 +448,7 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 				pd.setMessage("Connecting to Server, Please wait.");
 				pd.setCancelable(false);
 				pd.setIndeterminate(true);
-				pd.show();		
+				pd.show();
 			}
 
 			@Override
@@ -507,7 +475,7 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 	}
 
 	private void showDbUpdateProgress() {
-		AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+		@SuppressLint("StaticFieldLeak") AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
 
 			@Override
 			protected void onPreExecute() {
@@ -549,7 +517,7 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 		}
 
 		loadSharedPreferences();
-		prefs.edit().putBoolean("isConnected", isConnected).commit();
+		prefs.edit().putBoolean("isConnected", isConnected).apply();
 		super.onPause();
 	}
 
@@ -605,16 +573,16 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 	}
 
 	private void saveAppState() {
-		prefs.edit().putBoolean("isConnected", false).commit();
+		prefs.edit().putBoolean("isConnected", false).apply();
 	}
 
 	public void launchAttackHall(View v) {
 		if (!isConnected || !MainService.checkConnection(this))
 			Toast.makeText(getApplicationContext(), "You have to be connected",
 					Toast.LENGTH_SHORT).show();
-		//else if (MainService.hostsList.size() == 0)
-		//	Toast.makeText(getApplicationContext(), "You have no hosts",
-		//			Toast.LENGTH_SHORT).show();
+			//else if (MainService.hostsList.size() == 0)
+			//	Toast.makeText(getApplicationContext(), "You have no hosts",
+			//			Toast.LENGTH_SHORT).show();
 		else
 			startActivity(new Intent(getApplicationContext(),
 					AttackHallActivity.class));
@@ -639,7 +607,7 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 
 		isConnected = false;
 		showAttackMenu(false);
-		
+
 
 	}
 
@@ -647,22 +615,23 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			String action = intent.getAction();
-			
-			if (action == StaticClass.ARMITAGE_SERVICE_STARTED) {
+
+			assert action != null;
+			if (action.equals(StaticClass.ARMITAGE_SERVICE_STARTED)) {
 				sessionsAdapter = new SidebarSessionsAdapter(
 						getApplicationContext(), MainService.sessionMgr.controlSessionsList);
 				sessionsList.setAdapter(sessionsAdapter);
-			} else if (action == StaticClass.ARMITAGE_CONNECTION_TIMEOUT) {
+			} else if (action.equals(StaticClass.ARMITAGE_CONNECTION_TIMEOUT)) {
 				Disconnect();
 				Toast.makeText(getApplicationContext(),
 						R.string.armitage_connectiontimeout, Toast.LENGTH_SHORT)
 						.show();
-			} else if (action == StaticClass.ARMITAGE_AUTHENTICATION_FAILED) {
+			} else if (action.equals(StaticClass.ARMITAGE_AUTHENTICATION_FAILED)) {
 				Disconnect();
 				Toast.makeText(getApplicationContext(),
 						R.string.armitage_authenticationfailed,
 						Toast.LENGTH_SHORT).show();
-			} else if (action == StaticClass.ARMITAGE_CONNECTION_SUCCESS) {
+			} else if (action.equals(StaticClass.ARMITAGE_CONNECTION_SUCCESS)) {
 				isConnected = true;
 				showAttackMenu(true);
 				if (pd != null) {
@@ -681,10 +650,10 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 				Intent tmpIntent = new Intent();
 				tmpIntent.setAction(StaticClass.ARMITAGE_LOAD_ALL_MODULES);
 				sendBroadcast(tmpIntent);
-				
+
 				checkSidebarSessions();
-				
-			} else if (action == StaticClass.ARMITAGE_CONNECTION_FAILED) {
+
+			} else if (action.equals(StaticClass.ARMITAGE_CONNECTION_FAILED)) {
 				Disconnect();
 				Log.e("ConnectionFailed", "" + intent.getStringExtra("error"));
 				Toast.makeText(getApplicationContext(),
@@ -694,11 +663,11 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 				setNotification();
 			}
 
-			else if (action == StaticClass.ARMITAGE_LOAD_EXPLOITS_FAILED) {
+			else if (action.equals(StaticClass.ARMITAGE_LOAD_EXPLOITS_FAILED)) {
 				Toast.makeText(getApplicationContext(),
 						"Failed to fetch exploits list", Toast.LENGTH_SHORT)
 						.show();
-			} else if (action == StaticClass.ARMITAGE_LOAD_EXPLOITS_SUCCESS) {
+			} else if (action.equals(StaticClass.ARMITAGE_LOAD_EXPLOITS_SUCCESS)) {
 				if (pd != null)
 					pd.dismiss();
 				MainService.modulesMap.setList("exploit",
@@ -717,16 +686,16 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 
 				modulesList.setAdapter(MainService.modulesMap.modulesAdapter);
 
-				getActionBar().setTitle(titles[0]);
+				Objects.requireNonNull(getActionBar()).setTitle(titles[0]);
 				MainService.modulesMap.switchAdapter("exploit");
 
 			}
 
-			else if (action == StaticClass.ARMITAGE_LOAD_PAYLOADS_FAILED) {
+			else if (action.equals(StaticClass.ARMITAGE_LOAD_PAYLOADS_FAILED)) {
 				Toast.makeText(getApplicationContext(),
 						"Failed to fetch payloads list", Toast.LENGTH_SHORT)
 						.show();
-			} else if (action == StaticClass.ARMITAGE_LOAD_PAYLOADS_SUCCESS) {
+			} else if (action.equals(StaticClass.ARMITAGE_LOAD_PAYLOADS_SUCCESS)) {
 				MainService.modulesMap.setList("payload",
 						MainService.databaseHandler.getAllModules("payloads"));
 				sidebarItems.get(1)
@@ -736,11 +705,11 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 				sidebarAdapter.notifyDataSetChanged();
 			}
 
-			else if (action == StaticClass.ARMITAGE_LOAD_POSTS_FAILED) {
+			else if (action.equals(StaticClass.ARMITAGE_LOAD_POSTS_FAILED)) {
 				Toast.makeText(getApplicationContext(),
 						"Failed to fetch posts list", Toast.LENGTH_SHORT)
 						.show();
-			} else if (action == StaticClass.ARMITAGE_LOAD_POSTS_SUCCESS) {
+			} else if (action.equals(StaticClass.ARMITAGE_LOAD_POSTS_SUCCESS)) {
 				MainService.modulesMap.setList("post",
 						MainService.databaseHandler.getAllModules("post"));
 				sidebarItems.get(2).setCount(
@@ -748,11 +717,11 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 				sidebarAdapter.notifyDataSetChanged();
 			}
 
-			else if (action == StaticClass.ARMITAGE_LOAD_ENCODERS_FAILED) {
+			else if (action.equals(StaticClass.ARMITAGE_LOAD_ENCODERS_FAILED)) {
 				Toast.makeText(getApplicationContext(),
 						"Failed to fetch encoderss list", Toast.LENGTH_SHORT)
 						.show();
-			} else if (action == StaticClass.ARMITAGE_LOAD_ENCODERS_SUCCESS) {
+			} else if (action.equals(StaticClass.ARMITAGE_LOAD_ENCODERS_SUCCESS)) {
 				MainService.modulesMap.setList("encoder",
 						MainService.databaseHandler.getAllModules("encoders"));
 				sidebarItems.get(3)
@@ -762,11 +731,11 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 				sidebarAdapter.notifyDataSetChanged();
 			}
 
-			else if (action == StaticClass.ARMITAGE_LOAD_AUXILIARY_FAILED) {
+			else if (action.equals(StaticClass.ARMITAGE_LOAD_AUXILIARY_FAILED)) {
 				Toast.makeText(getApplicationContext(),
 						"Failed to fetch auxiliary list", Toast.LENGTH_SHORT)
 						.show();
-			} else if (action == StaticClass.ARMITAGE_LOAD_AUXILIARY_SUCCESS) {
+			} else if (action.equals(StaticClass.ARMITAGE_LOAD_AUXILIARY_SUCCESS)) {
 				MainService.modulesMap.setList("auxiliary",
 						MainService.databaseHandler.getAllModules("auxiliary"));
 				sidebarItems.get(4).setCount(
@@ -775,10 +744,10 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 				sidebarAdapter.notifyDataSetChanged();
 			}
 
-			else if (action == StaticClass.ARMITAGE_LOAD_NOPS_FAILED) {
+			else if (action.equals(StaticClass.ARMITAGE_LOAD_NOPS_FAILED)) {
 				Toast.makeText(getApplicationContext(),
 						"Failed to fetch nops list", Toast.LENGTH_SHORT).show();
-			} else if (action == StaticClass.ARMITAGE_LOAD_NOPS_SUCCESS) {
+			} else if (action.equals(StaticClass.ARMITAGE_LOAD_NOPS_SUCCESS)) {
 				MainService.modulesMap.setList("nop",
 						MainService.databaseHandler.getAllModules("nops"));
 				sidebarItems.get(5).setCount(
@@ -786,14 +755,13 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 				sidebarAdapter.notifyDataSetChanged();
 			}
 
-			else if (action == StaticClass.ARMITAGE_DATABASE_UPDATE_STARTED) {
+			else if (action.equals(StaticClass.ARMITAGE_DATABASE_UPDATE_STARTED)) {
 				showDbUpdateProgress();
-			} else if (action == StaticClass.ARMITAGE_DATABASE_UPDATE_STOPPED) {
-				// if (pd != null) {
-				// pd.dismiss();
-				// pd = null;
-				// }
-			}
+			}  // if (pd != null) {
+			// pd.dismiss();
+			// pd = null;
+			// }
+
 		}
 	};
 
@@ -809,7 +777,7 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 		PendingIntent pNotificationIntent = PendingIntent.getActivity(this, 0,
 				NotificationIntent, 0);
 
-		noti = new Notification.Builder(getApplicationContext()).setWhen(0)
+		Notification noti = new Notification.Builder(getApplicationContext()).setWhen(0)
 				.setContentTitle("Armitage").setContentText(notiText)
 				.setSmallIcon(R.drawable.ic_launcher)
 				.setContentIntent(pNotificationIntent).getNotification();
@@ -847,22 +815,14 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 									+ "\nDo you want to edit settings ?")
 					.setIcon(android.R.drawable.ic_menu_preferences)
 					.setPositiveButton("Yes",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int which) {
-									Intent intent = new Intent(
-											getApplicationContext(),
-											SettingsActivity.class);
-									startActivity(intent);
-								}
+							(dialog, which) -> {
+								Intent intent = new Intent(
+										getApplicationContext(),
+										SettingsActivity.class);
+								startActivity(intent);
 							})
 					.setNegativeButton("Exit",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int which) {
-									finish();
-								}
-							}).setNeutralButton("No", null).show();
+							(dialog, which) -> finish()).setNeutralButton("No", null).show();
 			return false;
 		} else
 			return true;
@@ -877,7 +837,7 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 
 		if (!con_txtUsername.equals("") && StaticClass.isNumeric(con_txtPort)
 				&& StaticClass.validateIPAddress(con_txtHost, false)) {
-			getActionBar().setSubtitle(
+			Objects.requireNonNull(getActionBar()).setSubtitle(
 					con_txtUsername + "@" + con_txtHost + ":" + con_txtPort);
 		}
 
@@ -886,43 +846,43 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 	private class ModulesListItemClickListener implements OnItemClickListener {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
-				long id) {
+								long id) {
 
 			Object obj = sidebarList.getItemAtPosition(position);
 			SidebarItem objDetails = (SidebarItem) obj;
 
 			if (!objDetails.isHeader()
 					&& (titlesHas(objDetails.getTitle()) || objDetails
-							.getTitle().equals("Armitage"))) {
+					.getTitle().equals("Armitage"))) {
 
 				if (objDetails.getTitle().equals(titles[0])) {
 					if (MainService.modulesMap.ExploitItems.size() > 0) {
-						getActionBar().setTitle(objDetails.getTitle());
+						Objects.requireNonNull(getActionBar()).setTitle(objDetails.getTitle());
 						MainService.modulesMap.switchAdapter("exploit");
 					}
 				} else if (objDetails.getTitle().equals(titles[1])) {
 					if (MainService.modulesMap.PayloadItems.size() > 0) {
-						getActionBar().setTitle(objDetails.getTitle());
+						Objects.requireNonNull(getActionBar()).setTitle(objDetails.getTitle());
 						MainService.modulesMap.switchAdapter("payload");
 					}
 				} else if (objDetails.getTitle().equals(titles[2])) {
 					if (MainService.modulesMap.PostItems.size() > 0) {
-						getActionBar().setTitle(objDetails.getTitle());
+						Objects.requireNonNull(getActionBar()).setTitle(objDetails.getTitle());
 						MainService.modulesMap.switchAdapter("post");
 					}
 				} else if (objDetails.getTitle().equals(titles[3])) {
 					if (MainService.modulesMap.EncoderItems.size() > 0) {
-						getActionBar().setTitle(objDetails.getTitle());
+						Objects.requireNonNull(getActionBar()).setTitle(objDetails.getTitle());
 						MainService.modulesMap.switchAdapter("encoder");
 					}
 				} else if (objDetails.getTitle().equals(titles[4])) {
 					if (MainService.modulesMap.AuxiliaryItems.size() > 0) {
-						getActionBar().setTitle(objDetails.getTitle());
+						Objects.requireNonNull(getActionBar()).setTitle(objDetails.getTitle());
 						MainService.modulesMap.switchAdapter("auxiliary");
 					}
 				} else if (objDetails.getTitle().equals(titles[5])) {
 					if (MainService.modulesMap.NopItems.size() > 0) {
-						getActionBar().setTitle(objDetails.getTitle());
+						Objects.requireNonNull(getActionBar()).setTitle(objDetails.getTitle());
 						MainService.modulesMap.switchAdapter("nop");
 					}
 				}
@@ -962,7 +922,7 @@ public class MainActivity extends Activity implements OnQueryTextListener {
 			findViewById(R.id.attackHall).setVisibility(View.GONE);
 			findViewById(R.id.attackHallIcon).setVisibility(View.GONE);
 			findViewById(R.id.attackWizard).setVisibility(View.GONE);
-			findViewById(R.id.attackWizardIcon).setVisibility(View.GONE);	
+			findViewById(R.id.attackWizardIcon).setVisibility(View.GONE);
 		}
 	}
 }

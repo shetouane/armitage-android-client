@@ -34,8 +34,8 @@ This source code was generated using:
 Android Studio: 4.1.2
 GRADLE: 6.5
 JAVA: 1.8
-Android SDK: 22
-Buid tools: 25.0.3
+Android SDK: 26
+Buid tools: 29.0.2
 ```
 
 
@@ -49,7 +49,7 @@ here is a list of what's not working
 > Widgets: Session Details & FileBrowser Plugin
 > Attack Wizard
 > If SSL option in settings is not checked the app will crash
-> Sending commands in console is not working (you can use visual commander for sending commands)
+> ~~Sending commands in console is not working 
 
 ```
 
